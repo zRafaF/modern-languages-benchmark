@@ -11,6 +11,13 @@ This repository implements the following benchmarks:
 
 * Bubble sort
 
+## Commands
+
+To run the benchmark you can use
+
+```
+python runner.py
+```
 
 ## Extra
 
