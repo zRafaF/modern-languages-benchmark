@@ -6,7 +6,6 @@ from input_generator import (
     generate_input_files,
     does_input_files_exist,
     IMAGE_INPUT_PATH,
-    VECTOR_INPUT_PATH,
 )
 
 from arguments import arguments, LanguagesEnum
@@ -20,7 +19,6 @@ def benchmark(program_path: str, args: list[str], iterations: int):
     execution_times = []
     for _ in range(iterations):
         start_time = time.time()
-        # Run the program
         subprocess.run([program_path, *args])
         end_time = time.time()
         execution_time = end_time - start_time
@@ -48,21 +46,15 @@ def run_benchmark(target_language: LanguagesEnum, iterations: int):
 
     args = [
         IMAGE_INPUT_PATH,
-        VECTOR_INPUT_PATH,
     ]
 
     match target_language:
         case LanguagesEnum.GO:
-            go_execution_times = benchmark(go_program_path, args, iterations)
-            print("Go Program Execution Times:", go_execution_times)
-
+            return benchmark(go_program_path, args, iterations)
         case LanguagesEnum.RUST:
-            rust_execution_times = benchmark(rust_program_path, args, iterations)
-            print("Rust Program Execution Times:", rust_execution_times)
-
+            return benchmark(rust_program_path, args, iterations)
         case LanguagesEnum.ZIG:
-            zig_execution_times = benchmark(zig_program_path, args, iterations)
-            print("Zig Program Execution Times:", zig_execution_times)
+            return benchmark(zig_program_path, args, iterations)
 
         case None:
             raise Exception("No target language provided")
@@ -71,7 +63,14 @@ def run_benchmark(target_language: LanguagesEnum, iterations: int):
 def main():
     if arguments.build:
         builder = Builder(RUST_DIRECTORY, ZIG_DIRECTORY, GO_DIRECTORY)
-        builder.build_all_programs()
+        for targ_lang in arguments.target_languages:
+            match targ_lang:
+                case LanguagesEnum.GO:
+                    builder.build_go_program()
+                case LanguagesEnum.RUST:
+                    builder.build_rust_program()
+                case LanguagesEnum.ZIG:
+                    builder.build_zig_program()
         return
 
     if arguments.generate:
@@ -79,12 +78,16 @@ def main():
         return
 
     if arguments.run:
+        results = []
         for targ_lang in arguments.target_languages:
             print(f"Running benchmark for {targ_lang}")
-            run_benchmark(targ_lang, arguments.iterations)
+            results.append((targ_lang, run_benchmark(targ_lang, arguments.iterations)))
+        print(results)
         return
 
-    raise Exception("No arguments provided. Use -h or --help for help.")
+    raise Exception(
+        "No main (run, generate, build) arguments provided. Use -h or --help for help."
+    )
 
 
 if __name__ == "__main__":

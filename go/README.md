@@ -2,13 +2,14 @@
 
 ## Versions
 
-* `Go`: 1.21.1
+- `Go`: 1.21.1
 
 ## Commands
+
 ### run
 
 ```
-go run .
+make run IMAGE_INPUT_PATH="your/path.raw"
 ```
 
 ### build
@@ -16,4 +17,3 @@ go run .
 ```
 go build
 ```
-

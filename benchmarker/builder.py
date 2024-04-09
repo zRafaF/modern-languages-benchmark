@@ -44,7 +44,7 @@ class Builder:
         """
         return binary_name + ".exe" if os.name == "nt" else binary_name
 
-    def _build_rust_program(self):
+    def build_rust_program(self):
         """
         Builds the Rust program and returns the path to the executable
 
@@ -57,7 +57,7 @@ class Builder:
 
         return self.rust_build_path
 
-    def _build_go_program(self):
+    def build_go_program(self):
         """
         Builds the Go program and returns the path to the executable
 
@@ -69,7 +69,7 @@ class Builder:
 
         return self.go_build_path
 
-    def _build_zig_program(self):
+    def build_zig_program(self):
         """
         Builds the Zig program and returns the path to the executable
 
@@ -86,9 +86,9 @@ class Builder:
         Builds all the programs
 
         """
-        self._build_rust_program()
-        self._build_go_program()
-        self._build_zig_program()
+        self.build_rust_program()
+        self.build_go_program()
+        self.build_zig_program()
 
     def does_builds_exist(
         self,

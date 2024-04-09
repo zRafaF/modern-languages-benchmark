@@ -9,54 +9,79 @@ It aims to provide a quick comparison of their relative performances on some use
 This repository implements the following benchmarks:
 
 - Bubble sort
+- Single threaded blur
+- Multi threaded blur
+
+The data for the benchmarks is generated randomly and saved in a `.raw` file, which is then read by the programs.
 
 ## Commands
 
 ### Install requirements
 
-```bash
+```shell
 make install
 ```
 
 ### Build all languages
 
-```bash
+```shell
 make build
 ```
 
 ### Generate input files
 
-```bash
+```shell
 make generate
 ```
 
 ### Run benchmark on every language
 
-```bash
+```shell
 make run
 ```
 
 ### Run benchmark on specific language
 
-```bash
+```shell
 make run-rust
 ```
 
-```bash
+```shell
 make run-go
 ```
 
-```bash
+```shell
 make run-zig
+```
+
+### Run fresh benchmark
+
+Rebuilds the source code and re generates the input files
+
+```shell
+make run-fresh
+```
+
+```shell
+make run-fresh-zig
+```
+
+```shell
+make run-fresh-go
+```
+
+```shell
+make run-fresh-rust
 ```
 
 ### Specify number of iterations
 
-```bash
+```shell
 make run ITERATIONS=1000
 ```
 
 > Defaults to 10
+> Works on specific language commands and fresh as well
 
 ## Extra
 

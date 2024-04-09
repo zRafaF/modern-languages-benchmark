@@ -1,5 +1,5 @@
 run:
-	@go run cmd/go-benchmark.go --debug $(IMAGE_INPUT_PATH)
+	@go run cmd/go-benchmark.go $(IMAGE_INPUT_PATH) $(VECTOR_INPUT)
 
 ifeq ($(OS),Windows_NT)
 build:
@@ -10,3 +10,4 @@ build:
 	@echo Building for Linux
 	@go build -o go-benchmark cmd/go-benchmark.go
 endif
+
