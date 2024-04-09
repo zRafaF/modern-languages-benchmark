@@ -29,14 +29,18 @@ def benchmark(program_path: str, args: list[str], iterations: int):
 def run_benchmark(target_language: LanguagesEnum, iterations: int):
     builder = Builder(RUST_DIRECTORY, ZIG_DIRECTORY, GO_DIRECTORY)
 
-    # Build the Rust program
-    rust_program_path = builder.rust_build_path
-    go_program_path = builder.go_build_path
-    zig_program_path = builder.zig_build_path
+    build_path: str = ""
 
-    print("Rust Program Path:", rust_program_path)
-    print("Go Program Path:", go_program_path)
-    print("Zig Program Path:", zig_program_path)
+    match target_language:
+        case LanguagesEnum.GO:
+            build_path = builder.go_build_path
+        case LanguagesEnum.RUST:
+            build_path = builder.rust_build_path
+        case LanguagesEnum.ZIG:
+            build_path = builder.zig_build_path
+
+        case _:
+            raise Exception("No target language provided")
 
     if not does_input_files_exist():
         raise Exception("Input files do not exist. Please generate them first.")
@@ -48,16 +52,7 @@ def run_benchmark(target_language: LanguagesEnum, iterations: int):
         IMAGE_INPUT_PATH,
     ]
 
-    match target_language:
-        case LanguagesEnum.GO:
-            return benchmark(go_program_path, args, iterations)
-        case LanguagesEnum.RUST:
-            return benchmark(rust_program_path, args, iterations)
-        case LanguagesEnum.ZIG:
-            return benchmark(zig_program_path, args, iterations)
-
-        case None:
-            raise Exception("No target language provided")
+    return benchmark(build_path, args, iterations)
 
 
 def main():
