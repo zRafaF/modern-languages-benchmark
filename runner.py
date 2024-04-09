@@ -2,59 +2,27 @@ import subprocess
 import time
 import os
 
+from argparse import ArgumentParser
+
+from builder import Builder
+from generator import generate_sorting_vector_file
+
+parser = ArgumentParser()
+parser.add_argument(
+    "-g",
+    "--generate",
+    help="Generates the vector file (File used as input for the benchmarks)",
+    default=False,
+    action="store_true",
+)
+
+args = parser.parse_args()
+
+
 RUST_DIRECTORY = "rust"
 GO_DIRECTORY = "go"
 ZIG_DIRECTORY = "zig"
 
-def get_portable_binary_name(binary_name: str) -> str:
-    """
-    Returns the portable binary name for the given binary name
-
-    Args:
-        binary_name (str): The binary name
-
-    Returns:
-        str: The portable binary name
-
-    """
-    return binary_name + ".exe" if os.name == "nt" else binary_name
-
-def build_rust_program():
-    """
-    Builds the Rust program and returns the path to the executable
-
-    Returns:
-        str: Path to the Rust executable
-
-    """
-    
-    os.system(f"cd {RUST_DIRECTORY} && cargo build --release")
-
-    return os.path.join(RUST_DIRECTORY, "target", "release", get_portable_binary_name("rust-benchmark"))
-
-def build_go_program():
-    """
-    Builds the Go program and returns the path to the executable
-
-    Returns:
-        str: Path to the Go executable
-
-    """
-    os.system(f"cd {GO_DIRECTORY} && make build")
-
-    return os.path.join(GO_DIRECTORY, get_portable_binary_name("go-benchmark"))
-
-def build_zig_program():
-    """
-    Builds the Zig program and returns the path to the executable
-
-    Returns:
-        str: Path to the Zig executable
-
-    """
-    os.system(f"cd {ZIG_DIRECTORY} && zig build")
-
-    return os.path.join(ZIG_DIRECTORY, "zig-out", "bin", get_portable_binary_name("zig-benchmark"))
 
 def benchmark(program_path, num_runs=10):
     execution_times = []
@@ -66,11 +34,22 @@ def benchmark(program_path, num_runs=10):
         execution_times.append(execution_time)
     return execution_times
 
-def main():
+
+def check_for_input_files():
+    if not os.path.exists("inputfiles"):
+        os.mkdir("inputfiles")
+    if not os.path.exists("inputfiles/vector_input.txt"):
+        generate_sorting_vector_file()
+
+def run_benchmark():
+    check_for_input_files()
+
+    builder = Builder(RUST_DIRECTORY, ZIG_DIRECTORY, GO_DIRECTORY)
+
     # Build the Rust program
-    rust_program_path = build_rust_program()
-    go_program_path = build_go_program()
-    zig_program_path = build_zig_program()
+    rust_program_path = builder.build_rust_program()
+    go_program_path = builder.build_go_program()
+    zig_program_path = builder.build_zig_program()
 
     if not rust_program_path:
         raise Exception("Failed to build Rust program")
@@ -78,12 +57,10 @@ def main():
         raise Exception("Failed to build Go program")
     if not zig_program_path:
         raise Exception("Failed to build Zig program")
-    
 
     print("Rust Program Path:", rust_program_path)
     print("Go Program Path:", go_program_path)
     print("Zig Program Path:", zig_program_path)
-
 
     # Benchmark each program
     go_execution_times = benchmark(go_program_path)
@@ -95,8 +72,14 @@ def main():
     print("Rust Program Execution Times:", rust_execution_times)
     print("Zig Program Execution Times:", zig_execution_times)
 
-    return
 
+def main():
+    if args.generate:
+        generate_sorting_vector_file()
+        return
+
+    run_benchmark()
+    return
 
 
 if __name__ == "__main__":
