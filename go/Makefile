@@ -1,5 +1,5 @@
 run:
-	@go run cmd/go-benchmark.go --debug
+	@go run cmd/go-benchmark.go --debug $(IMAGE_INPUT_PATH)
 
 ifeq ($(OS),Windows_NT)
 build:

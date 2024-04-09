@@ -4,20 +4,59 @@ This repository is made to compare some benchmarks of the languages `Rust`, `Go`
 
 It aims to provide a quick comparison of their relative performances on some use cases.
 
-
 ## Benchmarks
 
 This repository implements the following benchmarks:
 
-* Bubble sort
+- Bubble sort
 
 ## Commands
 
-To run the benchmark you can use
+### Install requirements
 
+```bash
+make install
 ```
-python runner.py
+
+### Build all languages
+
+```bash
+make build
 ```
+
+### Generate input files
+
+```bash
+make generate
+```
+
+### Run benchmark on every language
+
+```bash
+make run
+```
+
+### Run benchmark on specific language
+
+```bash
+make run-rust
+```
+
+```bash
+make run-go
+```
+
+```bash
+make run-zig
+```
+
+### Specify number of iterations
+
+```bash
+make run ITERATIONS=1000
+```
+
+> Defaults to 10
 
 ## Extra
 
