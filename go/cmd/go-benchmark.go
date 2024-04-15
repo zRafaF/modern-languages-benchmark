@@ -6,12 +6,12 @@ import (
 )
 
 func main() {
-	if len(os.Args) < 2 {
-		fmt.Println("Usage: go run main.go <path_to_raw_image>")
+	imagePath := os.Args[0]
+
+	if imagePath == "" {
+		fmt.Println("Error: No image path specified")
 		os.Exit(1)
 	}
-	// Get the path to the .raw image file from command line argument
-	imagePath := os.Args[1]
 
 	fmt.Println("Loading image from", imagePath)
 
@@ -39,7 +39,15 @@ func main() {
 		os.Exit(1)
 	}
 
-	// Print the loaded image data
-	fmt.Println(imageData)
+	// buffer := bytes.NewBuffer(imageData)
+	// var nowVar uint8
+	// binary.Read(buffer, binary.BigEndian, &nowVar)
+	// fmt.Println(nowVar)
+	// // Print the loaded image data
+	// data := binary.BigEndian.Uint16(imageData)
+	// fmt.Println(data)
 
+	// bubblesort.Sort(imageData)
+
+	fmt.Println("Image loaded successfully")
 }

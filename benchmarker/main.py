@@ -49,7 +49,7 @@ def run_benchmark(target_language: LanguagesEnum, iterations: int):
         raise Exception("Builds do not exist. Please build them first.")
 
     args = [
-        IMAGE_INPUT_PATH,
+        f"{IMAGE_INPUT_PATH}",
     ]
 
     return benchmark(build_path, args, iterations)
