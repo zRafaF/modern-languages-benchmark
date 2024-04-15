@@ -7,40 +7,41 @@ ifeq ($(shell uname),Linux)
 endif
 
 ITERATIONS ?= 10
+TYPE ?= 1
 
 .PHONY: run build generate install
 
 # Target to run the Python program after building
 run: 
 	@echo "Running the Python benchmark..."
-	$(PYTHON) benchmarker/main.py -r --go --zig --rust --iterations=$(ITERATIONS)
+	$(PYTHON) benchmarker/main.py -r --go --zig --rust --iterations=$(ITERATIONS) -t=$(TYPE)
 
 run-go:
 	@echo "Running the Go benchmark..."
-	$(PYTHON) benchmarker/main.py -r --go --iterations=$(ITERATIONS)
+	$(PYTHON) benchmarker/main.py -r --go --iterations=$(ITERATIONS) -t=$(TYPE)
 
 run-zig:
 	@echo "Running the Zig benchmark..."
-	$(PYTHON) benchmarker/main.py -r --zig --iterations=$(ITERATIONS)
+	$(PYTHON) benchmarker/main.py -r --zig --iterations=$(ITERATIONS) -t=$(TYPE)
 
 run-rust:
 	@echo "Running the Rust benchmark..."
-	$(PYTHON) benchmarker/main.py -r --rust --iterations=$(ITERATIONS)
+	$(PYTHON) benchmarker/main.py -r --rust --iterations=$(ITERATIONS) -t=$(TYPE)
 
 
 
 # Target to run the Python program after building
-run-fresh: generate build run
+run-fresh: build run
 	@echo "Running a fresh benchmark..."
 
 
-run-go-fresh: generate build-go run-go
+run-go-fresh: build-go run-go
 	@echo "Running a fresh Go benchmark..."
 
-run-zig-fresh: generate build-zig run-zig
+run-zig-fresh: build-zig run-zig
 	@echo "Running a fresh Zig benchmark..."
 
-run-rust-fresh: generate build-rust run-rust
+run-rust-fresh: build-rust run-rust
 	@echo "Running a fresh Rust benchmark..."
 
 

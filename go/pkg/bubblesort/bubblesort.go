@@ -1,16 +1,15 @@
 package bubblesort
 
-func Sort(arr []int) []int {
-	n := len(arr)
-	swapped := true
-	for swapped {
-		swapped = false
-		for i := 1; i < n; i++ {
-			if arr[i-1] > arr[i] {
-				arr[i], arr[i-1] = arr[i-1], arr[i]
-				swapped = true
+func Sort(arr []byte) []byte {
+	len := len(arr)
+
+	for i := 0; i < len; i++ {
+		for j := 0; j < len-i-1; j++ {
+			if arr[j] > arr[j+1] {
+				arr[j], arr[j+1] = arr[j+1], arr[j]
 			}
 		}
 	}
+
 	return arr
 }

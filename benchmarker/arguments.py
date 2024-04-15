@@ -8,6 +8,12 @@ class LanguagesEnum(Enum):
     ZIG = 3
 
 
+class BenchmarkTypeEnum(Enum):
+    BUBBLE_SORT = 1
+    GAUSSIAN_BLUR_SEQ = 2
+    GAUSSIAN_BLUR_PAR = 3
+
+
 parser = ArgumentParser()
 parser.add_argument(
     "-g",
@@ -23,6 +29,14 @@ parser.add_argument(
     help="Runs the benchmark",
     default=False,
     action="store_true",
+)
+
+parser.add_argument(
+    "-t",
+    "--type",
+    help="Type of benchmark to run\n 1: Bubble Sort\n 2: Gaussian Blur Sequential\n 3: Gaussian Blur Parallel",
+    default=1,
+    type=int,
 )
 
 parser.add_argument(
@@ -72,6 +86,17 @@ class Arguments:
         self.build: bool = args.build
         self.iterations: int = args.iterations
         self.target_languages = self._get_target_languages()
+        self.benchmark_type = self._get_benchmark_type()
+
+    def _get_benchmark_type(self) -> BenchmarkTypeEnum:
+        if args.type == 1:
+            return BenchmarkTypeEnum.BUBBLE_SORT
+        elif args.type == 2:
+            return BenchmarkTypeEnum.GAUSSIAN_BLUR_SEQ
+        elif args.type == 3:
+            return BenchmarkTypeEnum.GAUSSIAN_BLUR_PAR
+        else:
+            raise Exception("Invalid benchmark type")
 
     def _get_target_languages(self) -> list[LanguagesEnum]:
         langs = []

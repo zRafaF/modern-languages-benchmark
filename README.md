@@ -83,6 +83,19 @@ make run ITERATIONS=1000
 > Defaults to 10
 > Works on specific language commands and fresh as well
 
+### Specify benchmark type
+
+```shell
+make run TYPE=1
+```
+
+- 1 - Bubble sort
+- 2 - Single threaded blur
+- 3 - Multi threaded blur
+
+> Defaults to 1
+> Works on specific language commands and fresh as well
+
 ## Extra
 
 For more specific info, such as how to run, dependencies and so on, you can checkout the `README.md` on each directory.

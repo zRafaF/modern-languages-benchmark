@@ -50,6 +50,7 @@ def run_benchmark(target_language: LanguagesEnum, iterations: int):
 
     args = [
         f"{IMAGE_INPUT_PATH}",
+        f"{arguments.benchmark_type.value}",
     ]
 
     return benchmark(build_path, args, iterations)
@@ -70,6 +71,7 @@ def main():
 
     if arguments.generate:
         generate_input_files()
+        print("Input files generated.")
         return
 
     if arguments.run:

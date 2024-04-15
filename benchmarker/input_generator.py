@@ -27,10 +27,11 @@ def generate_image_file():
         str: Path to the generated image file
     """
 
-    # Generate a 512x512 image with random noise
-    noise = np.random.randint(0, 256, (512, 512), dtype=np.uint8)
+    # Generate a 256x256 with random noise
+    noise = np.random.randint(0, 256, (256 * 256), dtype=np.uint8)
 
-    noise.tofile(IMAGE_INPUT_PATH)
+    with open(IMAGE_INPUT_PATH, "wb") as f:
+        f.write(noise.tobytes())
 
     return IMAGE_INPUT_PATH
 
