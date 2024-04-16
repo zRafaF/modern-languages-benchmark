@@ -46,10 +46,12 @@ func main() {
 	switch BenchmarkType(benchmarkType) {
 	case BubbleSort:
 		fmt.Println("Bubble Sort")
-		bubblesort.Sort(data)
+		res := bubblesort.Sort(data)
+		fmt.Println(res)
 	case GaussianBlurSequential:
 		fmt.Println("Gaussian Blur Sequential")
 		gaussianblur.Sequential(data)
+
 	case GaussianBlurParallel:
 		fmt.Println("Gaussian Blur Parallel")
 		gaussianblur.Parallel(data)
