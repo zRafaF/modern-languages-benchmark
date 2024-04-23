@@ -28,44 +28,30 @@ pub fn main() !void {
     // Skip executable
     _ = argsIterator.next();
 
-    var counter: i8 = 0;
-    var path: []const u8 = undefined;
-    var benchType: []const u8 = undefined;
+    var path = argsIterator.next() orelse {
+        std.debug.print("No path provided\n", .{});
+        return;
+    };
 
-    // Handle cases accordingly
-    while (argsIterator.next()) |arg| {
-        counter += 1;
-        switch (counter) {
-            // First argument is the path
-            1 => path = arg,
-            // Second argument is the benchmark type
-            2 => benchType = arg,
-            // If there are more than 2 arguments, print an error
-            else => {
-                std.debug.print("Too many arguments\n", .{});
-                return;
-            },
-        }
-    }
+    var benchType = argsIterator.next() orelse {
+        std.debug.print("No benchmark type provided\n", .{});
+        return;
+    };
 
     const benchTypeInt = try std.fmt.parseInt(i8, benchType, 10);
+
+    // Reads the .raw file
     var vec = try readBinFile(path);
 
-    std.debug.print("vec len: {}\n", .{vec.len});
-    std.debug.print("first elem: {}\n", .{vec[0]});
-    std.debug.print("last elem: {}\n", .{vec[vec.len - 1]});
-    // for (vec) |elem| {
-    //     std.debug.print("elem: {}\n", .{elem});
-    // }
     switch (benchTypeInt) {
         1 => {
-            try bubbleSort.sort();
+            _ = bubbleSort.sort(vec);
         },
         2 => {
-            try gaussianBlur.sequential();
+            _ = gaussianBlur.sequential(vec);
         },
         3 => {
-            try gaussianBlur.parallel();
+            _ = gaussianBlur.parallel(vec);
         },
         else => {
             std.debug.print("Invalid benchmark type\n", .{});

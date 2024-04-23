@@ -1,5 +1,6 @@
 const std = @import("std");
 
-pub fn sort() !void {
-    std.debug.print("Bubble\n", .{});
+pub fn sort(vec: []u8) []u8 {
+    std.debug.print("Bubble Sort on vec of size: {}\n", .{vec.len});
+    return vec;
 }
