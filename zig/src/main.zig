@@ -4,7 +4,7 @@ pub const bubbleSort = @import("bubblesort.zig");
 pub const gaussianBlur = @import("gaussianblur.zig");
 
 fn readBinFile(path: []const u8) ![]u8 {
-    var file = try std.fs.cwd().openFile(path, .{});
+    const file = try std.fs.cwd().openFile(path, .{});
     defer file.close();
 
     const allocator = std.heap.page_allocator;
@@ -28,12 +28,12 @@ pub fn main() !void {
     // Skip executable
     _ = argsIterator.next();
 
-    var path = argsIterator.next() orelse {
+    const path = argsIterator.next() orelse {
         std.debug.print("No path provided\n", .{});
         return;
     };
 
-    var benchType = argsIterator.next() orelse {
+    const benchType = argsIterator.next() orelse {
         std.debug.print("No benchmark type provided\n", .{});
         return;
     };
@@ -41,7 +41,7 @@ pub fn main() !void {
     const benchTypeInt = try std.fmt.parseInt(i8, benchType, 10);
 
     // Reads the .raw file
-    var vec = try readBinFile(path);
+    const vec = try readBinFile(path);
 
     switch (benchTypeInt) {
         1 => {
