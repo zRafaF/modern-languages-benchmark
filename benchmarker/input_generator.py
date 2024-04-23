@@ -1,7 +1,6 @@
 import random
 import os.path
 import numpy as np
-from PIL import Image
 
 INPUT_FILES_PATH = "input_files"
 

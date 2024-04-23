@@ -53,6 +53,8 @@ def run_benchmark(target_language: LanguagesEnum, iterations: int):
         f"{arguments.benchmark_type.value}",
     ]
 
+    print(build_path)
+
     return benchmark(build_path, args, iterations)
 
 
