@@ -43,31 +43,13 @@ fn main() {
     //switch between benchmarks
     match benchmark_type {
         1 => {
-            let sorted = bubblesort::sort(buffer);
-            println!(
-                "First element: {}, last element: {}, vec size: {}",
-                sorted[0],
-                sorted[sorted.len() - 1],
-                sorted.len()
-            );
+            _ = bubblesort::sort(buffer);
         }
         2 => {
-            let blurred = gaussianblur::sequential(buffer);
-            println!(
-                "First element: {}, last element: {}, vec size: {}",
-                blurred[0],
-                blurred[blurred.len() - 1],
-                blurred.len()
-            );
+            _ = gaussianblur::sequential(buffer);
         }
         3 => {
-            let blurred = gaussianblur::parallel(buffer);
-            println!(
-                "First element: {}, last element: {}, vec size: {}",
-                blurred[0],
-                blurred[blurred.len() - 1],
-                blurred.len()
-            );
+            _ = gaussianblur::parallel(buffer);
         }
         _ => {
             eprintln!("Error: The second argument must be a valid number.");
