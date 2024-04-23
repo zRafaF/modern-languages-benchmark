@@ -3,16 +3,6 @@ const std = @import("std");
 pub const bubbleSort = @import("bubblesort.zig");
 pub const gaussianBlur = @import("gaussianblur.zig");
 
-fn readVectorFile(path: []const u8) ![]u8 {
-    // const allocator = std.heap.page_allocator;
-    var file = try std.fs.cwd().openFile(path, .{});
-    defer file.close();
-
-    var buffer: [131072]u8 = undefined;
-    var bytesRead = try file.read(buffer[0..]);
-    return buffer[0..bytesRead];
-}
-
 fn readBinFile(path: []const u8) ![]u8 {
     var file = try std.fs.cwd().openFile(path, .{});
     defer file.close();
