@@ -32,6 +32,8 @@ def generate_image_file():
     with open(IMAGE_INPUT_PATH, "wb") as f:
         f.write(noise.tobytes())
 
+    print(f"First byte: {noise[0]} Last byte: {noise[-1]}")
+
     return IMAGE_INPUT_PATH
 
 

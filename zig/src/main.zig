@@ -1,6 +1,29 @@
 const std = @import("std");
+
 pub const bubbleSort = @import("bubblesort.zig");
 pub const gaussianBlur = @import("gaussianblur.zig");
+
+fn readVectorFile(path: []const u8) ![]u8 {
+    // const allocator = std.heap.page_allocator;
+    var file = try std.fs.cwd().openFile(path, .{});
+    defer file.close();
+
+    var buffer: [131072]u8 = undefined;
+    var bytesRead = try file.read(buffer[0..]);
+    return buffer[0..bytesRead];
+}
+
+fn readBinFile(path: []const u8) ![]u8 {
+    var file = try std.fs.cwd().openFile(path, .{});
+    defer file.close();
+
+    const allocator = std.heap.page_allocator;
+    const stats = try file.stat();
+
+    var buffer: []u8 = try allocator.alloc(u8, stats.size);
+    var bytesRead = try file.read(buffer[0..]);
+    return buffer[0..bytesRead];
+}
 
 pub fn main() !void {
     // Initialize an allocator
@@ -36,7 +59,14 @@ pub fn main() !void {
     }
 
     const benchTypeInt = try std.fmt.parseInt(i8, benchType, 10);
+    var vec = try readBinFile(path);
 
+    std.debug.print("vec len: {}\n", .{vec.len});
+    std.debug.print("first elem: {}\n", .{vec[0]});
+    std.debug.print("last elem: {}\n", .{vec[vec.len - 1]});
+    // for (vec) |elem| {
+    //     std.debug.print("elem: {}\n", .{elem});
+    // }
     switch (benchTypeInt) {
         1 => {
             try bubbleSort.sort();
