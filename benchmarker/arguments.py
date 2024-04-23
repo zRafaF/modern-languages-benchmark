@@ -101,7 +101,6 @@ class Arguments:
     def _get_target_languages(self) -> list[LanguagesEnum]:
         langs = []
         if args.go:
-            print("Go")
             langs.append(LanguagesEnum.GO)
         if args.rust:
             langs.append(LanguagesEnum.RUST)
