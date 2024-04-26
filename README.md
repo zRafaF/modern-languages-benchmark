@@ -96,6 +96,20 @@ make run TYPE=1
 > Defaults to 1
 > Works on specific language commands and fresh as well
 
+### Show the output file as an image
+
+```shell
+make show-go
+make show-zig
+make show-rust
+```
+
+### Show input file as an image
+
+```shell
+make show-input
+```
+
 ## Extra
 
 For more specific info, such as how to run, dependencies and so on, you can checkout the `README.md` on each directory.

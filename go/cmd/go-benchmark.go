@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/binary"
 	"fmt"
 	"go-benchmark/pkg/bubblesort"
 	"go-benchmark/pkg/gaussianblur"
@@ -15,6 +16,21 @@ const (
 	GaussianBlurSequential BenchmarkType = 2
 	GaussianBlurParallel   BenchmarkType = 3
 )
+
+// Save binary data to a file
+func saveToFile(data []byte, filename string) error {
+	f, err := os.Create(filename)
+	if err != nil {
+		return err
+	}
+	defer f.Close()
+
+	err = binary.Write(f, binary.LittleEndian, data)
+	if err != nil {
+		return err
+	}
+	return err
+}
 
 func main() {
 	fmt.Println("Args n°:", len(os.Args))
@@ -45,11 +61,15 @@ func main() {
 
 	switch BenchmarkType(benchmarkType) {
 	case BubbleSort:
-		bubblesort.Sort(data)
+		res := bubblesort.Sort(data)
+		saveToFile(res, "go_result.raw")
 	case GaussianBlurSequential:
-		gaussianblur.Sequential(data)
+		res := gaussianblur.Sequential(data)
+		saveToFile(res, "go_result.raw")
 	case GaussianBlurParallel:
-		gaussianblur.Parallel(data)
+		res := gaussianblur.Parallel(data)
+		saveToFile(res, "go_result.raw")
+
 	}
 
 }

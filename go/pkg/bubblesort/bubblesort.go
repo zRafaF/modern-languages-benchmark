@@ -3,15 +3,18 @@ package bubblesort
 func Sort(arr []byte) []byte {
 	len := len(arr)
 
-	swapped := true
-	for i := 0; i < len && swapped; i++ {
-		swapped = false
-		for j := 0; j < len-i-1; j++ {
-			if arr[j] > arr[j+1] {
-				arr[j], arr[j+1] = arr[j+1], arr[j]
+	for {
+		swapped := false
+		for i := 0; i < len-1; i++ {
+			if arr[i] > arr[i+1] {
+				arr[i], arr[i+1] = arr[i+1], arr[i]
 				swapped = true
 			}
 		}
+		if !swapped {
+			break
+		}
+
 	}
 	return arr
 }

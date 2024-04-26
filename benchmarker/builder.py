@@ -77,7 +77,7 @@ class Builder:
             str: Path to the Zig executable
 
         """
-        os.system(f"cd {self._zig_directory} && zig build")
+        os.system(f"cd {self._zig_directory} && zig build -Doptimize=ReleaseFast")
 
         return self.zig_build_path
 

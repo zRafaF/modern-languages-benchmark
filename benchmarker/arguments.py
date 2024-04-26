@@ -75,6 +75,13 @@ parser.add_argument(
     type=int,
 )
 
+parser.add_argument(
+    "--output",
+    help="Output file path for the benchmark results",
+    action="store",
+    type=str,
+)
+
 args = parser.parse_args()
 
 
@@ -87,6 +94,7 @@ class Arguments:
         self.iterations: int = args.iterations
         self.target_languages = self._get_target_languages()
         self.benchmark_type = self._get_benchmark_type()
+        self.output_file = args.output
 
     def _get_benchmark_type(self) -> BenchmarkTypeEnum:
         if args.type == 1:

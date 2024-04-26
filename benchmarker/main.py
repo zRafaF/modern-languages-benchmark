@@ -9,6 +9,7 @@ from input_generator import (
 )
 
 from arguments import arguments, LanguagesEnum
+from viewer import plot_image_from_raw_file
 
 RUST_DIRECTORY = os.path.join(os.getcwd(), "rust")
 GO_DIRECTORY = os.path.join(os.getcwd(), "go")
@@ -17,7 +18,8 @@ ZIG_DIRECTORY = os.path.join(os.getcwd(), "zig")
 
 def benchmark(program_path: str, args: list[str], iterations: int):
     execution_times = []
-    for _ in range(iterations):
+    for it in range(iterations):
+        print(f"Iteration: {it}")
         start_time = time.time()
         subprocess.run([program_path, *args])
         end_time = time.time()
@@ -59,6 +61,10 @@ def run_benchmark(target_language: LanguagesEnum, iterations: int):
 
 
 def main():
+    if arguments.output_file:
+        plot_image_from_raw_file(arguments.output_file)
+        return
+
     if arguments.build:
         builder = Builder(RUST_DIRECTORY, ZIG_DIRECTORY, GO_DIRECTORY)
         for targ_lang in arguments.target_languages:
@@ -80,8 +86,14 @@ def main():
         results = []
         for targ_lang in arguments.target_languages:
             print(f"Running benchmark for {targ_lang}")
-            results.append((targ_lang, run_benchmark(targ_lang, arguments.iterations)))
+            exec_times = run_benchmark(targ_lang, arguments.iterations)
+            results.append((targ_lang, exec_times))
         print(results)
+
+        total_times = sum(exec_times)
+
+        print(f"Average time: {total_times/arguments.iterations}")
+
         return
 
     raise Exception(

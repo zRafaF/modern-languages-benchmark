@@ -15,6 +15,16 @@ fn readBinFile(path: []const u8) ![]u8 {
     return buffer[0..bytesRead];
 }
 
+fn saveBinFile(path: []const u8, data: []u8) !void {
+    const file = try std.fs.cwd().createFile(path, .{});
+    defer file.close();
+
+    const writer = file.writer();
+
+    // Write the data array to the file
+    try writer.writeAll(data);
+}
+
 pub fn main() !void {
     // Initialize an allocator
     // Can be any one of them, this is the most basic one
@@ -45,13 +55,16 @@ pub fn main() !void {
 
     switch (benchTypeInt) {
         1 => {
-            _ = bubbleSort.sort(vec);
+            const res = bubbleSort.sort(vec);
+            try saveBinFile("zig_result.raw", res);
         },
         2 => {
-            _ = gaussianBlur.sequential(vec);
+            const res = gaussianBlur.sequential(vec);
+            try saveBinFile("zig_result.raw", res);
         },
         3 => {
-            _ = gaussianBlur.parallel(vec);
+            const res = gaussianBlur.parallel(vec);
+            try saveBinFile("zig_result.raw", res);
         },
         else => {
             std.debug.print("Invalid benchmark type\n", .{});

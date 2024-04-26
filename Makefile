@@ -69,3 +69,16 @@ generate:
 
 install:
 	$(PYTHON) -m pip install -r benchmarker/requirements.txt
+
+
+show-input:
+	$(PYTHON) benchmarker/main.py --output=input_files/image_input.raw
+
+show-zig:
+	$(PYTHON) benchmarker/main.py --output=zig_result.raw
+
+show-go:
+	$(PYTHON) benchmarker/main.py --output=go_result.raw
+
+show-rust:
+	$(PYTHON) benchmarker/main.py --output=rust_result.raw
