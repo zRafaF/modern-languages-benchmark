@@ -32,23 +32,17 @@ def generate_noise():
 
 
 def generate_check_board():
-    # Dimensions of the checkerboard
     size = 256
-    block_size = size // 8  # Each block size
+    block_size = size // 8
 
-    # Create a 256x256 checkboard
     checkboard = np.zeros((size, size), dtype=np.uint8)
-
-    # Define colors (e.g., black and white)
-    color1 = 0  # black
-    color2 = 255  # white
 
     # Fill the checkerboard
     for i in range(0, size, block_size):
         for j in range(0, size, block_size):
             # Alternate between black and white blocks
             current_color = (
-                color1 if ((i // block_size) + (j // block_size)) % 2 == 0 else color2
+                0 if ((i // block_size) + (j // block_size)) % 2 == 0 else 255
             )
             checkboard[i : i + block_size, j : j + block_size] = current_color
 
