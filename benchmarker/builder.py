@@ -1,4 +1,5 @@
 import os
+from arguments import  LanguagesEnum
 
 
 class Builder:
@@ -89,6 +90,26 @@ class Builder:
         self.build_rust_program()
         self.build_go_program()
         self.build_zig_program()
+
+    def does_build_exist(
+            self,
+            target_language: LanguagesEnum
+    ) -> bool:
+        """
+        Checks if the build of a language exists
+        """
+        # Check if all the build paths exist
+
+        match target_language:
+            case LanguagesEnum.GO:
+                return os.path.exists(self.go_build_path)
+            case LanguagesEnum.RUST:
+                return os.path.exists(self.rust_build_path)
+            case LanguagesEnum.ZIG:
+                return os.path.exists(self.zig_build_path)
+            case _:
+                return False
+        
 
     def does_builds_exist(
         self,

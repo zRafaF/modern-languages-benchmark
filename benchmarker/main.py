@@ -47,8 +47,8 @@ def run_benchmark(target_language: LanguagesEnum, iterations: int):
     if not does_input_files_exist():
         raise Exception("Input files do not exist. Please generate them first.")
 
-    if not builder.does_builds_exist():
-        raise Exception("Builds do not exist. Please build them first.")
+    if not builder.does_build_exist(target_language):
+        raise Exception("Build does not exist. Please build it first.")
 
     args = [
         f"{IMAGE_INPUT_PATH}",
