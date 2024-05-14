@@ -11,6 +11,8 @@ fn readBinFile(path: []const u8) ![]u8 {
     const stats = try file.stat();
 
     var buffer: []u8 = try allocator.alloc(u8, stats.size);
+    defer allocator.free(buffer);
+
     var bytesRead = try file.read(buffer[0..]);
     return buffer[0..bytesRead];
 }

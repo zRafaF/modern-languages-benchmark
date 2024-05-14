@@ -1,10 +1,25 @@
 use std::env;
 use std::fs::File;
-use std::io::Read;
+use std::io::{Read, Write};
 use std::process;
 
 pub mod boxblur;
 pub mod bubblesort;
+
+fn save_data_to_bin_file(data: Vec<u8>, file_name: &str) {
+    let mut file = match File::create(file_name) {
+        Ok(file) => file,
+        Err(e) => {
+            eprintln!("Failed to create file: {}", e);
+            process::exit(1);
+        }
+    };
+
+    if let Err(e) = file.write_all(&data) {
+        eprintln!("Failed to write to file: {}", e);
+        process::exit(1);
+    }
+}
 
 fn main() {
     // Collect command line arguments
@@ -43,13 +58,16 @@ fn main() {
     //switch between benchmarks
     match benchmark_type {
         1 => {
-            _ = bubblesort::sort(buffer);
+            let res = bubblesort::sort(buffer);
+            save_data_to_bin_file(res, "rust_result.raw");
         }
         2 => {
-            _ = boxblur::sequential(buffer);
+            let res = boxblur::sequential(buffer);
+            save_data_to_bin_file(res, "rust_result.raw");
         }
         3 => {
-            _ = boxblur::parallel(buffer);
+            let res = boxblur::parallel(buffer);
+            save_data_to_bin_file(res, "rust_result.raw");
         }
         _ => {
             eprintln!("Error: The second argument must be a valid number.");
