@@ -1,9 +1,3 @@
 {
-  "cSpell.words": [
-    "bubblesort",
-    "gaussianblur",
-    "gaussianblurseq",
-    "targ",
-    "tofile"
-  ]
+  "cSpell.words": ["bubblesort", "boxblur", "boxblurseq", "targ", "tofile"]
 }

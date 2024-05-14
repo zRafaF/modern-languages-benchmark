@@ -1,7 +1,7 @@
 const std = @import("std");
 
 pub const bubbleSort = @import("bubblesort.zig");
-pub const gaussianBlur = @import("gaussianblur.zig");
+pub const boxBlur = @import("boxblur.zig");
 
 fn readBinFile(path: []const u8) ![]u8 {
     const file = try std.fs.cwd().openFile(path, .{});
@@ -59,11 +59,11 @@ pub fn main() !void {
             try saveBinFile("zig_result.raw", res);
         },
         2 => {
-            const res = gaussianBlur.sequential(vec);
+            const res = boxBlur.sequential(vec);
             try saveBinFile("zig_result.raw", res);
         },
         3 => {
-            const res = gaussianBlur.parallel(vec);
+            const res = boxBlur.parallel(vec);
             try saveBinFile("zig_result.raw", res);
         },
         else => {

@@ -32,7 +32,7 @@ def generate_noise():
 
 
 def generate_check_board():
-    size = 256
+    size = 512
     block_size = size // 8
 
     checkboard = np.zeros((size, size), dtype=np.uint8)

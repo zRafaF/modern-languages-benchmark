@@ -3,8 +3,8 @@ package main
 import (
 	"encoding/binary"
 	"fmt"
+	"go-benchmark/pkg/boxblur"
 	"go-benchmark/pkg/bubblesort"
-	"go-benchmark/pkg/gaussianblur"
 	"os"
 	"strconv"
 )
@@ -12,9 +12,9 @@ import (
 type BenchmarkType byte
 
 const (
-	BubbleSort             BenchmarkType = 1
-	GaussianBlurSequential BenchmarkType = 2
-	GaussianBlurParallel   BenchmarkType = 3
+	BubbleSort        BenchmarkType = 1
+	BoxBlurSequential BenchmarkType = 2
+	BoxBlurParallel   BenchmarkType = 3
 )
 
 // Save binary data to a file
@@ -63,11 +63,11 @@ func main() {
 	case BubbleSort:
 		res := bubblesort.Sort(data)
 		saveToFile(res, "go_result.raw")
-	case GaussianBlurSequential:
-		res := gaussianblur.Sequential(data)
+	case BoxBlurSequential:
+		res := boxblur.Sequential(data)
 		saveToFile(res, "go_result.raw")
-	case GaussianBlurParallel:
-		res := gaussianblur.Parallel(data)
+	case BoxBlurParallel:
+		res := boxblur.Parallel(data)
 		saveToFile(res, "go_result.raw")
 
 	}

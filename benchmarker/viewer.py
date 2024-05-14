@@ -1,5 +1,6 @@
 ## Receives a path to a .raw file with an array with values from [0 - 255] and plots it as an image
 
+import math
 from matplotlib import pyplot as plt
 import numpy as np
 
@@ -12,7 +13,8 @@ def plot_image_from_raw_file(file_path: str):
     with open(IMAGE_INPUT_PATH, "rb") as file:
         data = file.read()
         data = np.frombuffer(data, dtype=np.uint8)
-        data = data.reshape((256, 256))
+        data_side_size = int(math.sqrt(len(data)))
+        data = data.reshape((data_side_size, data_side_size))
         axs[0].imshow(
             data,
             cmap="gray",
@@ -22,7 +24,8 @@ def plot_image_from_raw_file(file_path: str):
     with open(file_path, "rb") as file:
         data = file.read()
         data = np.frombuffer(data, dtype=np.uint8)
-        data = data.reshape((256, 256))
+        data_side_size = int(math.sqrt(len(data)))
+        data = data.reshape((data_side_size, data_side_size))
         axs[1].imshow(
             data,
             cmap="gray",

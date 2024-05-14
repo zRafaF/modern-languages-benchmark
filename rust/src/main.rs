@@ -3,8 +3,8 @@ use std::fs::File;
 use std::io::Read;
 use std::process;
 
+pub mod boxblur;
 pub mod bubblesort;
-pub mod gaussianblur;
 
 fn main() {
     // Collect command line arguments
@@ -46,10 +46,10 @@ fn main() {
             _ = bubblesort::sort(buffer);
         }
         2 => {
-            _ = gaussianblur::sequential(buffer);
+            _ = boxblur::sequential(buffer);
         }
         3 => {
-            _ = gaussianblur::parallel(buffer);
+            _ = boxblur::parallel(buffer);
         }
         _ => {
             eprintln!("Error: The second argument must be a valid number.");
