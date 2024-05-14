@@ -6,12 +6,11 @@ pub const boxBlur = @import("boxblur.zig");
 fn readBinFile(path: []const u8) ![]u8 {
     const file = try std.fs.cwd().openFile(path, .{});
     defer file.close();
-
-    const allocator = std.heap.page_allocator;
     const stats = try file.stat();
 
+    const allocator = std.heap.page_allocator;
+
     var buffer: []u8 = try allocator.alloc(u8, stats.size);
-    defer allocator.free(buffer);
 
     const bytesRead = try file.read(buffer[0..]);
     return buffer[0..bytesRead];
@@ -57,15 +56,15 @@ pub fn main() !void {
 
     switch (benchTypeInt) {
         1 => {
-            const res = bubbleSort.sort(vec);
+            const res = try bubbleSort.sort(vec);
             try saveBinFile("zig_result.raw", res);
         },
         2 => {
-            const res = boxBlur.sequential(vec);
+            const res = try boxBlur.sequential(vec);
             try saveBinFile("zig_result.raw", res);
         },
         3 => {
-            const res = boxBlur.parallel(vec);
+            const res = try boxBlur.parallel(vec);
             try saveBinFile("zig_result.raw", res);
         },
         else => {

@@ -8,16 +8,14 @@ fn indexTo2d(idx: usize, sideSize: usize) [2]usize {
     return .{ idx / sideSize, idx % sideSize };
 }
 
-fn generateBoxBlurKernel(size: usize) []f64 {
+fn generateBoxBlurKernel(size: usize) ![]f64 {
     const allocator = std.heap.page_allocator;
+    const numOfElements = size * size;
 
-    var kernel: []f64 = try allocator.alloc(f64, size * size);
-    defer allocator.free(kernel);
+    var kernel = try allocator.alloc(f64, numOfElements);
 
-    for (kernel, 0..size) |_, i| {
-        for (kernel, 0..size) |_, j| {
-            kernel[index(i, j, size)] = @as(f64, 1.0 / (size * size));
-        }
+    for (kernel, 0..numOfElements) |_, i| {
+        kernel[i] = @as(f64, 1.0 / @as(f64, @floatFromInt(numOfElements)));
     }
 
     return kernel;
@@ -29,25 +27,29 @@ fn applyConvolution(arr: []u8, arraySize: usize, elementIds: usize, kernel: []f6
     for (kernel, 0..kernelSize) |_, i| {
         for (kernel, 0..kernelSize) |_, j| {
             const ret2d = indexTo2d(elementIds, arraySize);
-            var x = ret2d[0] + (i - kernelSize / 2);
-            var y = ret2d[1] + (j - kernelSize / 2);
+            var x: usize = ret2d[0] + (i - kernelSize / 2);
+            var y: usize = ret2d[1] + (j - kernelSize / 2);
 
-            if ((x < 0) || (y < 0) || (x >= arraySize) || (y >= arraySize)) {
+            if ((x < 0) or (y < 0) or (x >= arraySize) or (y >= arraySize)) {
                 continue;
             }
 
-            sum += @as(f64, arr[index(x, y, arraySize)]) * kernel[index(i, j, kernelSize)];
+            sum += @as(f64, @floatFromInt(arr[index(x, y, arraySize)])) * kernel[index(i, j, kernelSize)];
         }
     }
 
-    return @as(u8, sum);
+    return @as(u8, @intFromFloat(sum));
 }
 
-pub fn sequential(vec: []u8) []u8 {
-    const kernelSize: usize = 19;
+pub fn sequential(vec: []u8) ![]u8 {
+    const kernelSize: usize = 3;
     const arraySize = @as(usize, @intFromFloat(std.math.sqrt(@as(f64, @floatFromInt(vec.len)))));
 
-    const kernel = generateBoxBlurKernel(kernelSize);
+    std.debug.print("Before\n", .{});
+    var kernel = generateBoxBlurKernel(kernelSize) catch {
+        return vec;
+    };
+    std.debug.print("After\n", .{});
 
     for (vec, 0..vec.len) |_, i| {
         vec[i] = applyConvolution(vec, arraySize, i, kernel, kernelSize);
@@ -56,6 +58,6 @@ pub fn sequential(vec: []u8) []u8 {
     return vec;
 }
 
-pub fn parallel(vec: []u8) []u8 {
+pub fn parallel(vec: []u8) ![]u8 {
     return vec;
 }

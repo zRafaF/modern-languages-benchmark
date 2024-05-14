@@ -14,12 +14,14 @@ func indexTo2d(idx, sideSize int) (int, int) {
 }
 
 func generateBoxBlurKernel(size int) []float64 {
-	kernel := make([]float64, size*size)
-	for i := 0; i < size; i++ {
-		for j := 0; j < size; j++ {
-			kernel[index(i, j, size)] = (1.0 / float64(size*size))
-		}
+	var numOfElements = size * size
+
+	kernel := make([]float64, numOfElements)
+
+	for i := 0; i < numOfElements; i++ {
+		kernel[i] = (1.0 / float64(numOfElements))
 	}
+
 	return kernel
 }
 
