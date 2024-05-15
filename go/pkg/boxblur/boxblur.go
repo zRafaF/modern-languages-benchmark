@@ -99,6 +99,5 @@ func Parallel(arr []byte) []byte {
 		arr[res.idx] = res.val
 	}
 
-	// Apply convolution using the Gaussian kernel
 	return arr
 }

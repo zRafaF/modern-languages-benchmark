@@ -23,7 +23,6 @@ fn generateBoxBlurKernel(size: usize) ![]f64 {
 
 fn applyConvolution(arr: []u8, arraySize: usize, elementIdx: usize, kernel: []f64, kernelSize: usize) u8 {
     var sum: f64 = 0.0;
-
     for (0..kernelSize) |i| {
         for (0..kernelSize) |j| {
             const ret2d = indexTo2d(elementIdx, arraySize);
@@ -37,7 +36,6 @@ fn applyConvolution(arr: []u8, arraySize: usize, elementIdx: usize, kernel: []f6
             sum += @as(f64, @floatFromInt(arr[index(@intCast(x), @intCast(y), arraySize)])) * kernel[index(i, j, kernelSize)];
         }
     }
-
     return @as(u8, @intFromFloat(sum));
 }
 
@@ -54,6 +52,29 @@ pub fn sequential(vec: []u8) ![]u8 {
     return vec;
 }
 
+fn parallelWork(vecPtr: *const []u8, vec: []u8, arraySize: usize, elementIdx: usize, kernel: []f64, kernelSize: usize) void {
+    vecPtr.*[elementIdx] = applyConvolution(vec, arraySize, elementIdx, kernel, kernelSize);
+}
+
 pub fn parallel(vec: []u8) ![]u8 {
+    const kernelSize: usize = 19;
+    const arraySize = @as(usize, @intFromFloat(std.math.sqrt(@as(f64, @floatFromInt(vec.len)))));
+
+    var kernel = try generateBoxBlurKernel(kernelSize);
+
+    const allocator = std.heap.page_allocator;
+    var handles = try allocator.alloc(std.Thread, vec.len);
+
+    var vecPtr = &vec;
+
+    for (0..vec.len) |i| {
+        // handles[i] = try std.Thread.spawn(.{}, parallelWork, .{ vecPtr, vecCopy, arraySize, i, kernel, kernelSize });
+        handles[i] = try std.Thread.spawn(.{}, parallelWork, .{ vecPtr, vec, arraySize, i, kernel, kernelSize });
+    }
+
+    for (handles) |h| {
+        h.join();
+    }
+
     return vec;
 }
