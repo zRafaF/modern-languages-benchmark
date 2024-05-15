@@ -62,18 +62,18 @@ pub fn parallel(vec: []u8) ![]u8 {
 
     var kernel = try generateBoxBlurKernel(kernelSize);
 
-    const allocator = std.heap.page_allocator;
-    var handles = try allocator.alloc(std.Thread, vec.len);
+    var gpa = std.heap.GeneralPurposeAllocator(.{}){};
+    defer _ = gpa.deinit();
+    const allocator = gpa.allocator();
+
+    var pool: std.Thread.Pool = undefined;
+    try pool.init(.{ .allocator = allocator });
+    defer pool.deinit();
 
     var vecPtr = &vec;
 
     for (0..vec.len) |i| {
-        // handles[i] = try std.Thread.spawn(.{}, parallelWork, .{ vecPtr, vecCopy, arraySize, i, kernel, kernelSize });
-        handles[i] = try std.Thread.spawn(.{}, parallelWork, .{ vecPtr, vec, arraySize, i, kernel, kernelSize });
-    }
-
-    for (handles) |h| {
-        h.join();
+        try pool.spawn(parallelWork, .{ vecPtr, vec, arraySize, i, kernel, kernelSize });
     }
 
     return vec;
