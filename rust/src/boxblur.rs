@@ -1,3 +1,5 @@
+use std::thread;
+
 fn index(x: usize, y: usize, side_size: usize) -> usize {
     x * side_size + y
 }
@@ -7,13 +9,13 @@ fn index_to_2d(idx: usize, side_size: usize) -> (usize, usize) {
 }
 
 fn generate_box_blur_kernel(size: usize) -> Vec<f64> {
-    let mut kernel = vec![0.0; size * size];
-    let size_f64 = size as f64;
-    for i in 0..size {
-        for j in 0..size {
-            kernel[index(i, j, size)] = 1.0 / (size_f64 * size_f64);
-        }
+    let num_of_elements = size * size;
+    let mut kernel = vec![0.0; num_of_elements];
+
+    for i in 0..num_of_elements {
+        kernel[i] = 1.0 / (num_of_elements as f64);
     }
+
     kernel
 }
 
@@ -57,21 +59,36 @@ pub fn parallel(arr: Vec<u8>) -> Vec<u8> {
 
     let kernel = generate_box_blur_kernel(KERNEL_SIZE);
 
+    // Create a vector to hold the handles of the spawned threads
     let mut handles = vec![];
 
-    for element_idx in 0..num_elements {
+    // Create a vector to store the result
+    let result = vec![0u8; num_elements];
+
+    // Use an atomic reference counter to safely share the result vector across threads
+    use std::sync::{Arc, Mutex};
+    let result = Arc::new(Mutex::new(result));
+
+    for idx in 0..num_elements {
         let arr = arr.clone();
         let kernel = kernel.clone();
-        let handle = std::thread::spawn(move || {
-            let val = apply_convolution(arr, array_size, element_idx, kernel, KERNEL_SIZE);
-            val
+        let result = Arc::clone(&result);
+
+        // Spawn a thread for each element
+        let handle = thread::spawn(move || {
+            let value = apply_convolution(arr, array_size, idx, kernel, KERNEL_SIZE);
+            let mut result = result.lock().unwrap();
+            result[idx] = value;
         });
+
         handles.push(handle);
     }
 
-    let result: Vec<u8> = handles
-        .into_iter()
-        .map(|handle| handle.join().unwrap())
-        .collect();
-    arr
+    // Wait for all threads to finish
+    for handle in handles {
+        handle.join().unwrap();
+    }
+
+    // Extract the result from the Arc
+    Arc::try_unwrap(result).unwrap().into_inner().unwrap()
 }
