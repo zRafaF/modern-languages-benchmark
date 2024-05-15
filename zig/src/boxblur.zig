@@ -14,27 +14,34 @@ fn generateBoxBlurKernel(size: usize) ![]f64 {
 
     var kernel = try allocator.alloc(f64, numOfElements);
 
-    for (kernel, 0..numOfElements) |_, i| {
+    for (0..numOfElements) |i| {
         kernel[i] = @as(f64, 1.0 / @as(f64, @floatFromInt(numOfElements)));
     }
 
     return kernel;
 }
 
-fn applyConvolution(arr: []u8, arraySize: usize, elementIds: usize, kernel: []f64, kernelSize: usize) u8 {
+fn applyConvolution(arr: []u8, arraySize: usize, elementIdx: usize, kernel: []f64, kernelSize: usize) u8 {
     var sum: f64 = 0.0;
 
-    for (kernel, 0..kernelSize) |_, i| {
-        for (kernel, 0..kernelSize) |_, j| {
-            const ret2d = indexTo2d(elementIds, arraySize);
-            var x: usize = ret2d[0] + (i - kernelSize / 2);
-            var y: usize = ret2d[1] + (j - kernelSize / 2);
+    for (0..kernelSize) |i| {
+        for (0..kernelSize) |j| {
+            const ret2d = indexTo2d(elementIdx, arraySize);
+            var x: i32 = @intFromFloat(@as(f32, @floatFromInt(ret2d[0])) + (@as(f32, @floatFromInt(i)) - @as(f32, @floatFromInt(kernelSize)) / 2.0));
+            var y: i32 = @intFromFloat(@as(f32, @floatFromInt(ret2d[1])) + (@as(f32, @floatFromInt(j)) - @as(f32, @floatFromInt(kernelSize)) / 2.0));
+            // std.debug.print("i: {}, j: {}\n", .{ (x), (y) });
 
             if ((x < 0) or (y < 0) or (x >= arraySize) or (y >= arraySize)) {
                 continue;
             }
 
-            sum += @as(f64, @floatFromInt(arr[index(x, y, arraySize)])) * kernel[index(i, j, kernelSize)];
+            // for (kernel) |elem| {
+            //     std.debug.print("elem: {}\n", .{elem});
+            // }
+            // std.debug.print("i: {}, j: {}, size: {}, elem: {}\n", .{ i, j, kernelSize, index(i, j, kernelSize) });
+
+            // std.debug.print("x: {}, y: {}, kernel {}\n", .{ (x), (y), kernel[index(i, j, kernelSize)] });
+            sum += @as(f64, @floatFromInt(arr[index(@intCast(x), @intCast(y), arraySize)])) * kernel[index(i, j, kernelSize)];
         }
     }
 
