@@ -27,11 +27,11 @@ fn applyConvolution(arr: []u8, arraySize: usize, elementIdx: usize, kernel: []f6
     for (0..kernelSize) |i| {
         for (0..kernelSize) |j| {
             const ret2d = indexTo2d(elementIdx, arraySize);
-            var x: i32 = @intFromFloat(@as(f32, @floatFromInt(ret2d[0])) + (@as(f32, @floatFromInt(i)) - @as(f32, @floatFromInt(kernelSize)) / 2.0));
-            var y: i32 = @intFromFloat(@as(f32, @floatFromInt(ret2d[1])) + (@as(f32, @floatFromInt(j)) - @as(f32, @floatFromInt(kernelSize)) / 2.0));
-            // std.debug.print("i: {}, j: {}\n", .{ (x), (y) });
+            var x: i32 = @intFromFloat(@as(f32, @floatFromInt(ret2d[0])) + (@as(f32, @floatFromInt(i)) - std.math.floor(@as(f32, @floatFromInt(kernelSize)) / 2.0)));
+            var y: i32 = @intFromFloat(@as(f32, @floatFromInt(ret2d[1])) + (@as(f32, @floatFromInt(j)) - std.math.floor(@as(f32, @floatFromInt(kernelSize)) / 2.0)));
 
-            if ((x < 0) or (y < 0) or (x >= arraySize) or (y >= arraySize)) {
+            if ((x < 0) or (y < 0) or (x > arraySize) or (y > arraySize)) {
+                // std.debug.print("x: {}, y: {}\n", .{ x, y });
                 continue;
             }
 
@@ -49,7 +49,7 @@ fn applyConvolution(arr: []u8, arraySize: usize, elementIdx: usize, kernel: []f6
 }
 
 pub fn sequential(vec: []u8) ![]u8 {
-    const kernelSize: usize = 3;
+    const kernelSize: usize = 19;
     const arraySize = @as(usize, @intFromFloat(std.math.sqrt(@as(f64, @floatFromInt(vec.len)))));
 
     std.debug.print("Before\n", .{});
