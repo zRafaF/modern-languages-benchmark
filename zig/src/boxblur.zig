@@ -31,16 +31,9 @@ fn applyConvolution(arr: []u8, arraySize: usize, elementIdx: usize, kernel: []f6
             var y: i32 = @intFromFloat(@as(f32, @floatFromInt(ret2d[1])) + (@as(f32, @floatFromInt(j)) - std.math.floor(@as(f32, @floatFromInt(kernelSize)) / 2.0)));
 
             if ((x < 0) or (y < 0) or (x > arraySize) or (y > arraySize)) {
-                // std.debug.print("x: {}, y: {}\n", .{ x, y });
                 continue;
             }
 
-            // for (kernel) |elem| {
-            //     std.debug.print("elem: {}\n", .{elem});
-            // }
-            // std.debug.print("i: {}, j: {}, size: {}, elem: {}\n", .{ i, j, kernelSize, index(i, j, kernelSize) });
-
-            // std.debug.print("x: {}, y: {}, kernel {}\n", .{ (x), (y), kernel[index(i, j, kernelSize)] });
             sum += @as(f64, @floatFromInt(arr[index(@intCast(x), @intCast(y), arraySize)])) * kernel[index(i, j, kernelSize)];
         }
     }
@@ -52,13 +45,9 @@ pub fn sequential(vec: []u8) ![]u8 {
     const kernelSize: usize = 19;
     const arraySize = @as(usize, @intFromFloat(std.math.sqrt(@as(f64, @floatFromInt(vec.len)))));
 
-    std.debug.print("Before\n", .{});
-    var kernel = generateBoxBlurKernel(kernelSize) catch {
-        return vec;
-    };
-    std.debug.print("After\n", .{});
+    var kernel = try generateBoxBlurKernel(kernelSize);
 
-    for (vec, 0..vec.len) |_, i| {
+    for (0..vec.len) |i| {
         vec[i] = applyConvolution(vec, arraySize, i, kernel, kernelSize);
     }
 
