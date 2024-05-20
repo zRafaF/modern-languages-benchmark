@@ -39,7 +39,6 @@ func applyConvolution(arr []byte, arraySize int, elementIdx int, kernel []float6
 		}
 	}
 	return byte(sum)
-
 }
 
 /*

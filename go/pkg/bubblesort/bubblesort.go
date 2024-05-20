@@ -2,7 +2,6 @@ package bubblesort
 
 func Sort(arr []byte) []byte {
 	len := len(arr)
-
 	for {
 		swapped := false
 		for i := 0; i < len-1; i++ {
