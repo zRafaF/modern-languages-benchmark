@@ -27,13 +27,17 @@ def generate_noise(size: int):
     np.random.seed(1234)
 
     # Generate a 256x256 with random noise
-    noise = np.random.randint(0, 256, (size, size), dtype=np.uint8)
+    noise = np.random.randint(
+        -256,
+        256,
+        (size, size),
+    )
 
     return noise
 
 
 def generate_check_board():
-    size = 512
+    size = 256
     block_size = size // 8
 
     checkboard = np.zeros((size, size), dtype=np.uint8)
@@ -49,9 +53,9 @@ def generate_check_board():
 
     noise = generate_noise(size)
 
-    composite = np.uint8(checkboard + (noise * 0.01))
+    composite = (checkboard + (noise * 0.5)).clip(0, 255).astype(np.uint8)
 
-    print(f'Check: {checkboard[0][0]} Noise: {noise[0][0]} sum: {composite[0][0]}')
+    print(f"Check: {checkboard[0][0]} Noise: {noise[0][0]} sum: {composite[0][0]}")
 
     return composite
 
