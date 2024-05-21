@@ -1,4 +1,6 @@
-use std::thread;
+use num_cpus;
+use std::sync::Arc;
+use threadpool::ThreadPool;
 
 fn index(x: usize, y: usize, side_size: usize) -> usize {
     x * side_size + y
@@ -20,10 +22,10 @@ fn generate_box_blur_kernel(size: usize) -> Vec<f64> {
 }
 
 fn apply_convolution(
-    arr: Vec<u8>,
+    arr: &[u8],
     array_size: usize,
     element_idx: usize,
-    kernel: Vec<f64>,
+    kernel: &[f64],
     kernel_size: usize,
 ) -> u8 {
     let mut sum = 0.0;
@@ -48,7 +50,7 @@ pub fn sequential(arr: Vec<u8>) -> Vec<u8> {
     let kernel = generate_box_blur_kernel(KERNEL_SIZE);
 
     (0..arr.len())
-        .map(|idx| apply_convolution(arr.clone(), array_size, idx, kernel.clone(), KERNEL_SIZE))
+        .map(|idx| apply_convolution(&arr, array_size, idx, &kernel, KERNEL_SIZE))
         .collect()
 }
 
@@ -59,36 +61,29 @@ pub fn parallel(arr: Vec<u8>) -> Vec<u8> {
 
     let kernel = generate_box_blur_kernel(KERNEL_SIZE);
 
-    // Create a vector to hold the handles of the spawned threads
-    let mut handles = vec![];
+    // Determine the number of available CPUs
+    let num_threads = num_cpus::get();
+    let pool = ThreadPool::new(num_threads);
 
-    // Create a vector to store the result
-    let result = vec![0u8; num_elements];
-
-    // Use an atomic reference counter to safely share the result vector across threads
-    use std::sync::{Arc, Mutex};
-    let result = Arc::new(Mutex::new(result));
+    // Shared result vector
+    let result = Arc::new(arr.clone()); // Arc is holding the original array
 
     for idx in 0..num_elements {
-        let arr = arr.clone();
         let kernel = kernel.clone();
         let result = Arc::clone(&result);
-
-        // Spawn a thread for each element
-        let handle = thread::spawn(move || {
-            let value = apply_convolution(arr, array_size, idx, kernel, KERNEL_SIZE);
-            let mut result = result.lock().unwrap();
-            result[idx] = value;
+        pool.execute(move || {
+            let value = apply_convolution(&result, array_size, idx, &kernel, KERNEL_SIZE);
+            // Unsafe: Directly modify result without synchronization
+            unsafe {
+                let ptr = result.as_ptr().add(idx) as *mut u8;
+                *ptr = value;
+            }
         });
-
-        handles.push(handle);
     }
 
     // Wait for all threads to finish
-    for handle in handles {
-        handle.join().unwrap();
-    }
+    pool.join();
 
-    // Extract the result from the Arc
-    Arc::try_unwrap(result).unwrap().into_inner().unwrap()
+    // Return the result
+    Arc::try_unwrap(result).expect("Failed to unwrap Arc")
 }
