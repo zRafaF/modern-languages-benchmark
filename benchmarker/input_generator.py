@@ -17,16 +17,17 @@ def does_input_files_exist():
     return True
 
 
-def generate_noise():
+def generate_noise(size: int):
     """
     Generates the image file (File used as input for the benchmarks)
 
     returns:
         str: Path to the generated image file
     """
+    np.random.seed(1234)
 
     # Generate a 256x256 with random noise
-    noise = np.random.randint(0, 256, (256 * 256), dtype=np.uint8)
+    noise = np.random.randint(0, 256, (size, size), dtype=np.uint8)
 
     return noise
 
@@ -46,7 +47,13 @@ def generate_check_board():
             )
             checkboard[i : i + block_size, j : j + block_size] = current_color
 
-    return checkboard
+    noise = generate_noise(size)
+
+    composite = np.uint8(checkboard + (noise * 0.01))
+
+    print(f'Check: {checkboard[0][0]} Noise: {noise[0][0]} sum: {composite[0][0]}')
+
+    return composite
 
 
 def generate_input_files():
