@@ -75,16 +75,11 @@ pub fn parallel(vec: []u8) ![]u8 {
     const cpus = try std.Thread.getCpuCount();
     var outVec = try allocator.alloc(u8, vec.len);
     var vecPtr = &outVec;
-    std.debug.print("vec len: {}\n", .{vec.len});
     for (0..cpus) |i| {
         const startIdx = (vec.len / cpus) * i;
         const endIdx = ((vec.len / cpus) * (i + 1));
 
-        std.debug.print("start idx: {}\n", .{startIdx});
-        std.debug.print("end idx: {}\n", .{endIdx});
-
         if (i == cpus - 1) {
-            std.debug.print("last cpu\n", .{});
             try pool.spawn(parallelWorkBulk, .{ vecPtr, vec, arraySize, startIdx, vec.len, kernel, kernelSize });
             break;
         }
