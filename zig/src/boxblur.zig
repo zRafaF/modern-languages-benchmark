@@ -52,8 +52,10 @@ pub fn sequential(vec: []u8) ![]u8 {
     return vec;
 }
 
-fn parallelWork(vecPtr: *const []u8, vec: []u8, arraySize: usize, elementIdx: usize, kernel: []f64, kernelSize: usize) void {
-    vecPtr.*[elementIdx] = applyConvolution(vec, arraySize, elementIdx, kernel, kernelSize);
+fn parallelWorkBulk(vecPtr: *const []u8, vec: []u8, arraySize: usize, startIdx: usize, endIdx: usize, kernel: []f64, kernelSize: usize) void {
+    for (startIdx..endIdx) |i| {
+        vecPtr.*[i] = applyConvolution(vec, arraySize, i, kernel, kernelSize);
+    }
 }
 
 pub fn parallel(vec: []u8) ![]u8 {
@@ -70,11 +72,25 @@ pub fn parallel(vec: []u8) ![]u8 {
     try pool.init(.{ .allocator = allocator });
     defer pool.deinit();
 
-    var vecPtr = &vec;
+    const cpus = try std.Thread.getCpuCount();
+    var outVec = try allocator.alloc(u8, vec.len);
+    var vecPtr = &outVec;
+    std.debug.print("vec len: {}\n", .{vec.len});
+    for (0..cpus) |i| {
+        const startIdx = (vec.len / cpus) * i;
+        const endIdx = ((vec.len / cpus) * (i + 1));
 
-    for (0..vec.len) |i| {
-        try pool.spawn(parallelWork, .{ vecPtr, vec, arraySize, i, kernel, kernelSize });
+        std.debug.print("start idx: {}\n", .{startIdx});
+        std.debug.print("end idx: {}\n", .{endIdx});
+
+        if (i == cpus - 1) {
+            std.debug.print("last cpu\n", .{});
+            try pool.spawn(parallelWorkBulk, .{ vecPtr, vec, arraySize, startIdx, vec.len, kernel, kernelSize });
+            break;
+        }
+
+        try pool.spawn(parallelWorkBulk, .{ vecPtr, vec, arraySize, startIdx, endIdx, kernel, kernelSize });
     }
 
-    return vec;
+    return outVec;
 }
