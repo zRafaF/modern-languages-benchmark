@@ -1,6 +1,7 @@
 import numpy as np
 from scipy.signal import convolve2d
 from concurrent.futures import ProcessPoolExecutor
+import multiprocessing
 
 
 def generate_box_blur_kernel(size):
@@ -36,7 +37,7 @@ def parallel(arr):
 
     arr = arr.reshape((array_size, array_size))
 
-    num_chunks = 4  # Adjust this based on the number of CPU cores
+    num_chunks = multiprocessing.cpu_count()
     chunk_size = array_size // num_chunks
     chunks = [arr[i * chunk_size : (i + 1) * chunk_size, :] for i in range(num_chunks)]
 
