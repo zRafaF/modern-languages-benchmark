@@ -6,6 +6,7 @@ class LanguagesEnum(Enum):
     GO = 1
     RUST = 2
     ZIG = 3
+    PYTHON = 4
 
 
 class BenchmarkTypeEnum(Enum):
@@ -69,6 +70,13 @@ parser.add_argument(
 )
 
 parser.add_argument(
+    "--python",
+    help="Runs the benchmark for the Python program",
+    default=False,
+    action="store_true",
+)
+
+parser.add_argument(
     "--iterations",
     help="Number of iterations for the benchmark",
     default=1,
@@ -114,6 +122,8 @@ class Arguments:
             langs.append(LanguagesEnum.RUST)
         if args.zig:
             langs.append(LanguagesEnum.ZIG)
+        if args.python:
+            langs.append(LanguagesEnum.PYTHON)
 
         return langs
 

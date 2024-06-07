@@ -28,7 +28,9 @@ run-rust:
 	@echo "Running the Rust benchmark..."
 	$(PYTHON) benchmarker/main.py -r --rust --iterations=$(ITERATIONS) -t=$(TYPE)
 
-
+run-python:
+	echo "Running the Python benchmark..."
+	$(PYTHON) benchmarker/main.py -r --python --iterations=$(ITERATIONS) -t=$(TYPE)
 
 # Target to run the Python program after building
 run-fresh: build run
@@ -43,6 +45,9 @@ run-zig-fresh: build-zig run-zig
 
 run-rust-fresh: build-rust run-rust
 	@echo "Running a fresh Rust benchmark..."
+
+run-python-fresh: run-python
+	echo "Running a fresh Python benchmark..."
 
 
 # Target to build the Python program
@@ -82,3 +87,6 @@ show-go:
 
 show-rust:
 	$(PYTHON) benchmarker/main.py --output=rust_result.raw
+
+show-python:
+	$(PYTHON) benchmarker/main.py --output=python_result.raw

@@ -1,9 +1,9 @@
 import os
-from arguments import  LanguagesEnum
+from arguments import LanguagesEnum
 
 
 class Builder:
-    def __init__(self, rust_directory, zig_directory, go_directory):
+    def __init__(self, rust_directory, zig_directory, go_directory, python_directory):
         """
         Initializes the Builder class
 
@@ -15,6 +15,7 @@ class Builder:
         self._rust_directory = rust_directory
         self._zig_directory = zig_directory
         self._go_directory = go_directory
+        self._python_directory = python_directory
 
         self.rust_build_path = os.path.join(
             self._rust_directory,
@@ -31,6 +32,7 @@ class Builder:
             "bin",
             self._get_portable_binary_name("zig-benchmark"),
         )
+        self.python_build_path = os.path.join(self._python_directory, "main.py")
 
     def _get_portable_binary_name(self, binary_name: str) -> str:
         """
@@ -91,10 +93,7 @@ class Builder:
         self.build_go_program()
         self.build_zig_program()
 
-    def does_build_exist(
-            self,
-            target_language: LanguagesEnum
-    ) -> bool:
+    def does_build_exist(self, target_language: LanguagesEnum) -> bool:
         """
         Checks if the build of a language exists
         """
@@ -107,9 +106,10 @@ class Builder:
                 return os.path.exists(self.rust_build_path)
             case LanguagesEnum.ZIG:
                 return os.path.exists(self.zig_build_path)
+            case LanguagesEnum.PYTHON:
+                return os.path.exists(self.python_build_path)
             case _:
                 return False
-        
 
     def does_builds_exist(
         self,

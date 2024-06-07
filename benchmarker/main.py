@@ -8,21 +8,28 @@ from input_generator import (
     generate_noise,
     IMAGE_INPUT_PATH,
 )
-
+import sys
 from arguments import arguments, LanguagesEnum
 from viewer import plot_image_from_raw_file
 
 RUST_DIRECTORY = os.path.join(os.getcwd(), "rust")
 GO_DIRECTORY = os.path.join(os.getcwd(), "go")
 ZIG_DIRECTORY = os.path.join(os.getcwd(), "zig")
+PYTHON_DIRECTORY = os.path.join(os.getcwd(), "python")
 
 
-def benchmark(program_path: str, args: list[str], iterations: int):
+def benchmark(
+    program_path: str, args: list[str], iterations: int, is_python: bool = False
+):
     execution_times = []
     for it in range(iterations):
         print(f"Iteration: {it}")
         start_time = time.time()
-        subprocess.run([program_path, *args])
+        if is_python:
+            current_env = os.environ.copy()
+            subprocess.run([sys.executable, program_path, *args], env=current_env)
+        else:
+            subprocess.run([program_path, *args])
         end_time = time.time()
         execution_time = end_time - start_time
         execution_times.append(execution_time)
@@ -30,7 +37,7 @@ def benchmark(program_path: str, args: list[str], iterations: int):
 
 
 def run_benchmark(target_language: LanguagesEnum, iterations: int):
-    builder = Builder(RUST_DIRECTORY, ZIG_DIRECTORY, GO_DIRECTORY)
+    builder = Builder(RUST_DIRECTORY, ZIG_DIRECTORY, GO_DIRECTORY, PYTHON_DIRECTORY)
 
     build_path: str = ""
 
@@ -41,7 +48,8 @@ def run_benchmark(target_language: LanguagesEnum, iterations: int):
             build_path = builder.rust_build_path
         case LanguagesEnum.ZIG:
             build_path = builder.zig_build_path
-
+        case LanguagesEnum.PYTHON:
+            build_path = builder.python_build_path
         case _:
             raise Exception("No target language provided")
 
@@ -58,7 +66,9 @@ def run_benchmark(target_language: LanguagesEnum, iterations: int):
 
     print(build_path)
 
-    return benchmark(build_path, args, iterations)
+    return benchmark(
+        build_path, args, iterations, target_language == LanguagesEnum.PYTHON
+    )
 
 
 def main():

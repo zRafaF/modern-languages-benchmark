@@ -51,8 +51,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Println("Loading image from", imagePath)
-
 	data, err := os.ReadFile(imagePath)
 	if err != nil {
 		fmt.Println("Error reading file:", err)
