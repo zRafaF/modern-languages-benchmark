@@ -102,6 +102,7 @@ make run TYPE=1
 make show-go
 make show-zig
 make show-rust
+make show-c
 ```
 
 ### Show input file as an image

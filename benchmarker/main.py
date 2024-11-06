@@ -16,6 +16,7 @@ RUST_DIRECTORY = os.path.join(os.getcwd(), "rust")
 GO_DIRECTORY = os.path.join(os.getcwd(), "go")
 ZIG_DIRECTORY = os.path.join(os.getcwd(), "zig")
 PYTHON_DIRECTORY = os.path.join(os.getcwd(), "python")
+C_DIRECTORY = os.path.join(os.getcwd(), "c")
 
 
 def benchmark(
@@ -37,7 +38,9 @@ def benchmark(
 
 
 def run_benchmark(target_language: LanguagesEnum, iterations: int):
-    builder = Builder(RUST_DIRECTORY, ZIG_DIRECTORY, GO_DIRECTORY, PYTHON_DIRECTORY)
+    builder = Builder(
+        RUST_DIRECTORY, ZIG_DIRECTORY, GO_DIRECTORY, PYTHON_DIRECTORY, C_DIRECTORY
+    )
 
     build_path: str = ""
 
@@ -50,6 +53,9 @@ def run_benchmark(target_language: LanguagesEnum, iterations: int):
             build_path = builder.zig_build_path
         case LanguagesEnum.PYTHON:
             build_path = builder.python_build_path
+        case LanguagesEnum.C:
+            build_path = builder.c_build_path
+
         case _:
             raise Exception("No target language provided")
 
@@ -77,7 +83,9 @@ def main():
         return
 
     if arguments.build:
-        builder = Builder(RUST_DIRECTORY, ZIG_DIRECTORY, GO_DIRECTORY)
+        builder = Builder(
+            RUST_DIRECTORY, ZIG_DIRECTORY, GO_DIRECTORY, PYTHON_DIRECTORY, C_DIRECTORY
+        )
         for targ_lang in arguments.target_languages:
             match targ_lang:
                 case LanguagesEnum.GO:
@@ -86,6 +94,8 @@ def main():
                     builder.build_rust_program()
                 case LanguagesEnum.ZIG:
                     builder.build_zig_program()
+                case LanguagesEnum.C:
+                    builder.build_c_program()
         return
 
     if arguments.generate:

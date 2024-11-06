@@ -7,6 +7,7 @@ class LanguagesEnum(Enum):
     RUST = 2
     ZIG = 3
     PYTHON = 4
+    C = 5
 
 
 class BenchmarkTypeEnum(Enum):
@@ -70,6 +71,13 @@ parser.add_argument(
 )
 
 parser.add_argument(
+    "--c",
+    help="Runs the benchmark for the C program",
+    default=False,
+    action="store_true",
+)
+
+parser.add_argument(
     "--python",
     help="Runs the benchmark for the Python program",
     default=False,
@@ -124,6 +132,8 @@ class Arguments:
             langs.append(LanguagesEnum.ZIG)
         if args.python:
             langs.append(LanguagesEnum.PYTHON)
+        if args.c:
+            langs.append(LanguagesEnum.C)
 
         return langs
 

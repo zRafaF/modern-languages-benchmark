@@ -32,6 +32,10 @@ run-python:
 	echo "Running the Python benchmark..."
 	$(PYTHON) benchmarker/main.py -r --python --iterations=$(ITERATIONS) -t=$(TYPE)
 
+run-c:
+	@echo "Running the C benchmark..."
+	$(PYTHON) benchmarker/main.py -r --c --iterations=$(ITERATIONS) -t=$(TYPE)
+
 # Target to run the Python program after building
 run-fresh: build run
 	@echo "Running a fresh benchmark..."
@@ -45,6 +49,9 @@ run-zig-fresh: build-zig run-zig
 
 run-rust-fresh: build-rust run-rust
 	@echo "Running a fresh Rust benchmark..."
+
+run-c-fresh: build-c run-c
+	@echo "Running a fresh C benchmark..."
 
 run-python-fresh: run-python
 	echo "Running a fresh Python benchmark..."
@@ -66,6 +73,10 @@ build-zig:
 build-rust:
 	@echo "Building the Rust program..."
 	$(PYTHON) benchmarker/main.py -b --rust
+
+build-c:
+	@echo "Building the C program..."
+	$(PYTHON) benchmarker/main.py -b --c
 
 # Target to generate input files
 generate:
@@ -90,3 +101,6 @@ show-rust:
 
 show-python:
 	$(PYTHON) benchmarker/main.py --output=python_result.raw
+
+show-c:
+	$(PYTHON) benchmarker/main.py --output=c_result.raw

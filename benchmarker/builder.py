@@ -3,7 +3,9 @@ from arguments import LanguagesEnum
 
 
 class Builder:
-    def __init__(self, rust_directory, zig_directory, go_directory, python_directory):
+    def __init__(
+        self, rust_directory, zig_directory, go_directory, python_directory, c_directory
+    ):
         """
         Initializes the Builder class
 
@@ -16,6 +18,7 @@ class Builder:
         self._zig_directory = zig_directory
         self._go_directory = go_directory
         self._python_directory = python_directory
+        self._c_directory = c_directory
 
         self.rust_build_path = os.path.join(
             self._rust_directory,
@@ -33,6 +36,10 @@ class Builder:
             self._get_portable_binary_name("zig-benchmark"),
         )
         self.python_build_path = os.path.join(self._python_directory, "main.py")
+
+        self.c_build_path = os.path.join(
+            self._c_directory, "bin", self._get_portable_binary_name("c-benchmark")
+        )
 
     def _get_portable_binary_name(self, binary_name: str) -> str:
         """
@@ -84,6 +91,18 @@ class Builder:
 
         return self.zig_build_path
 
+    def build_c_program(self):
+        """
+        Builds the C program and returns the path to the executable
+
+        Returns:
+            str: Path to the C executable
+
+        """
+        os.system(f"cd {self._c_directory} && make")
+
+        return self.c_build_path
+
     def build_all_programs(self):
         """
         Builds all the programs
@@ -92,6 +111,7 @@ class Builder:
         self.build_rust_program()
         self.build_go_program()
         self.build_zig_program()
+        self.build_c_program()
 
     def does_build_exist(self, target_language: LanguagesEnum) -> bool:
         """
@@ -108,6 +128,8 @@ class Builder:
                 return os.path.exists(self.zig_build_path)
             case LanguagesEnum.PYTHON:
                 return os.path.exists(self.python_build_path)
+            case LanguagesEnum.C:
+                return os.path.exists(self.c_build_path)
             case _:
                 return False
 
